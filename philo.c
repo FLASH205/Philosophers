@@ -5,33 +5,35 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/19 14:05:17 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/03/22 11:48:43 by ybahmaz          ###   ########.fr       */
+/*   Created: 2025/03/13 12:41:55 by ybahmaz           #+#    #+#             */
+/*   Updated: 2025/03/25 08:16:18 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	ft_init_philo(t_data *data)
+void	ft_initial_philos(t_data *data)
 {
-	t_philos	*philo;
-	int			i;
+	int	i;
 
-	philo = data->philos;
-	i = -1;
-	while (++i < data->n_philo)
+	i = 0;
+	while (i < data->n_philo)
 	{
-		philo[i].n = i + 1;
-		philo[i].last_meal_time = -1;
-		philo[i].meals_eaten = 0;
-		philo[i].l_fork = &data->forks[i];
-		philo[i].r_fork = &data->forks[(i + 1) % data->n_philo];
-		philo[i].data = data;
+		pthread_mutex_init(&data->forks[i], NULL);
+		data->philos[i].n = i + 1;
+		data->philos[i].last_meal_time = data->start_time;
+		data->philos[i].meals_eaten = 0;
+		data->philos[i].data = data;
+		data->philos[i].l_fork = &data->forks[i];
+		data->philos[i].r_fork = &data->forks[(i + 1) % data->n_philo];
+		i++;
 	}
 }
 
-int	ft_init_data(t_data *data, char **av)
+int	ft_initial_data(t_data *data, char **av)
 {
+	int	i;
+	
 	data->n_philo = ft_atoi(av[1]);
 	data->time_die = ft_atoi(av[2]);
 	data->time_eat = ft_atoi(av[3]);
@@ -39,32 +41,33 @@ int	ft_init_data(t_data *data, char **av)
 	data->n_meals = -1;
 	if (av[5])
 		data->n_meals = ft_atoi(av[5]);
-	if (!data->philos || !data->time_die || !data->time_eat
+	if (!data->n_philo || !data->time_die || !data->time_eat
 		|| !data->time_sleep || !data->n_meals)
-		return (write(2, "Invalid arguments\n", 18), 0);
-	data->stop = 0;
-	data->t_start = ft_current_time();
-	if (!data->t_start)
 		return (0);
+	data->stop = 0;
+	data->start_time = ft_current_time();
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->n_philo);
 	data->philos = malloc(sizeof(t_philos) * data->n_philo);
 	if (!data->forks || !data->philos)
-		return (0);
-	if (pthread_mutex_init(&data->print_lock, NULL))
-		return (0);
+		return (1);
+	i = -1;
+	while (++i < data->n_philo)
+		pthread_mutex_init(&data->forks[i], NULL);
+	pthread_mutex_init(&data->print_lock, NULL);
 	return (1);
 }
-
-int	main(int argc, char *argv[])
+	
+int	main(int ac, char *av[])
 {
 	t_data	data;
-
-	if (argc < 5 || argc > 6)
+	
+	if (ac < 5 || ac > 6)
 		return (write(2, "Should be 5 or 6 arguments\n", 27), 1);
-	if (!ft_init_data(&data, argv))
-		return (1);
-	ft_init_philo(&data);
+	if (!ft_initial_data(&data, av))
+		return (write(2, "Invalid arguments\n", 18), 1);
+	ft_initial_philos(&data);
 	if (!ft_start_simulation(&data))
 		return (1);
-	return 0;
+	ft_clean(&data);
+	return (0);
 }

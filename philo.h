@@ -5,16 +5,16 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/19 14:05:11 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/03/20 14:42:46 by ybahmaz          ###   ########.fr       */
+/*   Created: 2025/03/13 12:42:08 by ybahmaz           #+#    #+#             */
+/*   Updated: 2025/03/24 14:55:26 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
-# define PHILO_H
+#define PHILO_H
 
-#include <stdio.h>
 #include <unistd.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include <sys/time.h>
@@ -37,16 +37,17 @@ typedef struct s_data
 	int				time_eat;
 	int				time_sleep;
 	int				n_meals;
-	size_t			t_start;
+	size_t			start_time;
 	int				stop;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print_lock;
-	pthread_mutex_t	death_check;
+	//!pthread_mutex_t	death_check;
 	t_philos		*philos;
 }	t_data;
 
-int		ft_atoi(char *str);
-size_t	ft_current_time(void);
-int		ft_start_simulation(t_data *data);
+int			ft_atoi(char *str);
+size_t		ft_current_time(void);
+int			ft_start_simulation(t_data *data);
+void	ft_clean(t_data *data);
 
 #endif

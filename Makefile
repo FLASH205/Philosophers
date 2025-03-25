@@ -1,11 +1,12 @@
 NAME = philo
 
-FLAG = -Wextra -Wall -Werror
+FLAG = -Wextra -Wall -Werror -fsanitize=address
 
 SRC = \
 	ft_atoi.c \
 	ft_current_time.c \
-	ft_start_simulation.c
+	ft_start_simulation.c \
+	ft_clean.c
 
 OBJ = $(SRC:.c=.o)
 
