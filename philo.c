@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:41:55 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/03/25 08:16:18 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/03/28 11:11:19 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ int	ft_initial_data(t_data *data, char **av)
 	while (++i < data->n_philo)
 		pthread_mutex_init(&data->forks[i], NULL);
 	pthread_mutex_init(&data->print_lock, NULL);
+	pthread_mutex_init(&data->death_check, NULL);
 	return (1);
 }
 	
@@ -64,10 +65,10 @@ int	main(int ac, char *av[])
 	if (ac < 5 || ac > 6)
 		return (write(2, "Should be 5 or 6 arguments\n", 27), 1);
 	if (!ft_initial_data(&data, av))
-		return (write(2, "Invalid arguments\n", 18), 1);
+		return (ft_clean(&data), write(2, "Invalid arguments\n", 18), 1);
 	ft_initial_philos(&data);
 	if (!ft_start_simulation(&data))
-		return (1);
+		return (ft_clean(&data), 1);
 	ft_clean(&data);
 	return (0);
 }

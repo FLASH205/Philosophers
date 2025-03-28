@@ -1,6 +1,6 @@
 NAME = philo
 
-FLAG = -Wextra -Wall -Werror -fsanitize=address
+FLAG = -Wextra -Wall -Werror
 
 SRC = \
 	ft_atoi.c \

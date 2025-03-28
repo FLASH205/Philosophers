@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:42:08 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/03/24 14:55:26 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/03/26 12:41:00 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,14 @@ typedef struct s_data
 	int				stop;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print_lock;
-	//!pthread_mutex_t	death_check;
+	pthread_mutex_t	death_check;
 	t_philos		*philos;
 }	t_data;
 
 int			ft_atoi(char *str);
 size_t		ft_current_time(void);
+void		ft_print_status(t_philos *philos, char *str);
 int			ft_start_simulation(t_data *data);
-void	ft_clean(t_data *data);
+void		ft_clean(t_data *data);
 
 #endif
