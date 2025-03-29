@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_clean.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybahmaz <ybahmaz@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:42:20 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/03/29 06:24:22 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/03/29 11:13:35 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,6 @@ void	ft_clean(t_data *data)
 		data->philos = NULL;
 	}
 	pthread_mutex_destroy(&data->print_lock);
-	pthread_mutex_destroy(&data->death_check);
-	pthread_mutex_destroy(&data->mutex);
+	pthread_mutex_destroy(&data->meals_mutex);
+	pthread_mutex_destroy(&data->stop_mutex);
 }

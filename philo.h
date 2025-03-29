@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybahmaz <ybahmaz@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:42:08 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/03/29 06:23:25 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/03/29 08:57:59 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ typedef struct s_data
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print_lock;
 	pthread_mutex_t	death_check;
-	pthread_mutex_t	mutex;
+	pthread_mutex_t	meals_mutex;
+	pthread_mutex_t	stop_mutex;
 	t_philos		*philos;
 }	t_data;
 
