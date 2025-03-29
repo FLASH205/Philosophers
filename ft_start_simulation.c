@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_start_simulation.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: ybahmaz <ybahmaz@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 13:03:00 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/03/28 16:03:01 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/03/29 06:26:00 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ void	ft_smart_sleep(size_t time, t_philos *philos)
 
 int	ft_eating(t_philos *philos)
 {
-	ft_print_status(philos, "has taken a fork");
 	pthread_mutex_lock(philos->l_fork);
+	ft_print_status(philos, "has taken a fork");
 	pthread_mutex_lock(&philos->data->print_lock);
 	if (philos->data->stop)
 		return (pthread_mutex_unlock(philos->l_fork),
@@ -111,8 +111,10 @@ void	*ft_one_philo(void	*arg)
 			return (NULL);
 		ft_print_status(philos, "has taken a fork");
 		ft_print_status(philos, "is eating");
+		pthread_mutex_lock(&philos->data->death_check);
 		philos->last_meal_time = ft_current_time();
 		philos->meals_eaten++;
+		pthread_mutex_unlock(&philos->data->death_check);
 		ft_smart_sleep(philos->data->time_eat, philos);
 		if (philos->meals_eaten == philos->data->n_meals)
 			return (NULL);
@@ -133,19 +135,23 @@ void	*ft_monitor(t_data *data)
 		i = -1;
 		while (++i < data->n_philo)
 		{
-			pthread_mutex_lock(&data->print_lock);
+			pthread_mutex_lock(&data->death_check);
 			if (data->stop || data->philos[i].meals_eaten == data->n_meals)
-				return (pthread_mutex_unlock(&data->print_lock), NULL);
+				return (pthread_mutex_unlock(&data->death_check), NULL);
+			pthread_mutex_unlock(&data->death_check);
+			pthread_mutex_lock(&data->death_check);
 			l_meal_time = data->philos[i].last_meal_time;
+			pthread_mutex_unlock(&data->death_check);
+			pthread_mutex_lock(&data->mutex);
 			if (ft_current_time() - l_meal_time > (size_t)data->time_die
 				&& data->time_eat != data->time_die)
 			{			
-				pthread_mutex_unlock(&data->print_lock);
 				ft_print_status(&data->philos[i], "died");
 				data->stop = 1;
+				pthread_mutex_unlock(&data->mutex);
 				return (NULL);
 			}
-			pthread_mutex_unlock(&data->print_lock);
+			pthread_mutex_unlock(&data->mutex);
 		}
 	}
 	return (0);
@@ -153,33 +159,29 @@ void	*ft_monitor(t_data *data)
 
 int	ft_start_simulation(t_data *data)
 {
-	int			i;
-	//pthread_t	monitor_thread;
+	int	i;
 
-	i = 0;
 	if (data->n_philo == 1)
 	{
-		if (pthread_create(&data->philos[i].thread, NULL,
-			ft_one_philo, &data->philos[i]))
+		if (pthread_create(&data->philos[0].thread, NULL,
+			ft_one_philo, &data->philos[0]))
 		return (write(2, "Error in simulation\n", 20), 0);
 	}
 	else
 	{
-		while (i < data->n_philo)
+		i = -1;
+		while (++i < data->n_philo)
 		{
 			if (pthread_create(&data->philos[i].thread, NULL,
 					ft_routine, &data->philos[i]) != 0)
 				return (write(2, "Error in simulation\n", 20), 0);
-			i++;
 		}
 	}
-	ft_monitor(data);
-	i = 0;
-	while (i < data->n_philo)
+	(ft_monitor(data), i = -1);
+	while (++i < data->n_philo)
 	{
 		if (pthread_join(data->philos[i].thread, NULL) != 0)
 			return (write(2, "Error joining threads\n", 20), 0);
-		i++;
 	}
 	return (1);
 }

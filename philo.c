@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: ybahmaz <ybahmaz@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:41:55 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/03/28 11:11:19 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/03/29 06:22:08 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ int	ft_initial_data(t_data *data, char **av)
 		pthread_mutex_init(&data->forks[i], NULL);
 	pthread_mutex_init(&data->print_lock, NULL);
 	pthread_mutex_init(&data->death_check, NULL);
+	pthread_mutex_init(&data->mutex, NULL);
 	return (1);
 }
 	
