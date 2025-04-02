@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 13:03:00 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/03/30 10:58:53 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/04/02 16:09:07 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,13 +86,13 @@ int	ft_eating(t_philos *philos)
 	philos->last_meal_time = ft_current_time();
 	philos->meals_eaten++;
 	pthread_mutex_unlock(&philos->data->meals_mutex);
+	ft_usleep((size_t)philos->data->time_eat, philos);
 	if (philos->meals_eaten == philos->data->n_meals)
 	{
 		pthread_mutex_unlock(second_fork);
 		pthread_mutex_unlock(first_fork);
 		return (0);
 	}
-	ft_usleep((size_t)philos->data->time_eat, philos);
 	pthread_mutex_unlock(second_fork);
 	pthread_mutex_unlock(first_fork);
 	return (1);
@@ -113,16 +113,20 @@ void	*ft_routine(void *arg)
 		pthread_mutex_unlock(&philos->data->stop_mutex);
 		if (!ft_eating(philos))
 			return (NULL);
+		pthread_mutex_lock(&philos->data->stop_mutex);
 		ft_print_status(philos, "is sleeping");
+		pthread_mutex_unlock(&philos->data->stop_mutex);
 		ft_usleep((size_t)philos->data->time_sleep, philos);
+		pthread_mutex_lock(&philos->data->stop_mutex);
 		ft_print_status(philos, "is thinking");
+		pthread_mutex_unlock(&philos->data->stop_mutex);
 	}
 }
 
 void	*ft_one_philo(void	*arg)
 {
 	t_philos	*philos;
-	
+
 	philos = (t_philos *)arg;
 	while (1)
 	{
@@ -195,7 +199,7 @@ int	ft_more_philos(t_data *data)
 			return (write(2, "Error joining threads\n", 22), 0);
 	}
 	if (pthread_join(monitor, NULL) != 0)
-			return (write(2, "Error joining threads\n", 22), 0);
+		return (write(2, "Error joining threads\n", 22), 0);
 	return (1);
 }
 

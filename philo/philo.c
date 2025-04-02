@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:41:55 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/03/30 12:27:40 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/04/02 14:12:48 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	ft_initial_philos(t_data *data)
 int	ft_initial_data(t_data *data, char **av)
 {
 	int	i;
-	
+
 	data->n_philo = ft_atoi(av[1]);
 	data->time_die = ft_atoi(av[2]);
 	data->time_eat = ft_atoi(av[3]);
@@ -58,15 +58,15 @@ int	ft_initial_data(t_data *data, char **av)
 	pthread_mutex_init(&data->stop_mutex, NULL);
 	return (1);
 }
-	
+
 int	main(int ac, char *av[])
 {
 	t_data	data;
-	
+
 	if (ac < 5 || ac > 6)
 		return (write(2, "Should be 5 or 6 arguments\n", 27), 1);
 	if (!ft_initial_data(&data, av))
-		return (ft_clean(&data), write(2, "Invalid arguments\n", 18), 1);
+		return (write(2, "Invalid arguments\n", 18), 1);
 	ft_initial_philos(&data);
 	if (!ft_start_simulation(&data))
 		return (ft_clean(&data), 1);

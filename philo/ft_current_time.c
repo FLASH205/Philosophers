@@ -1,35 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_clean.c                                         :+:      :+:    :+:   */
+/*   ft_current_time.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/24 14:42:20 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/03/30 12:27:43 by ybahmaz          ###   ########.fr       */
+/*   Created: 2025/03/17 10:48:17 by ybahmaz           #+#    #+#             */
+/*   Updated: 2025/04/02 13:12:14 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	ft_clean(t_data *data)
+size_t	ft_current_time(void)
 {
-	int	i;
+	struct timeval	tv;
 
-	i = -1;
-	if (data->forks)
-	{
-		while (++i < data->n_philo)
-			pthread_mutex_destroy(&data->forks[i]);
-		free(data->forks);
-		data->forks = NULL;
-	}
-	if (data->philos)
-	{
-		free(data->philos);	
-		data->philos = NULL;
-	}
-	pthread_mutex_destroy(&data->print_lock);
-	pthread_mutex_destroy(&data->meals_mutex);
-	pthread_mutex_destroy(&data->stop_mutex);
+	gettimeofday(&tv, NULL);
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
