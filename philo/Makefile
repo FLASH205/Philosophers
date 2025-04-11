@@ -1,11 +1,12 @@
 NAME = philo
 
-FLAG = -Wextra -Wall -Werror -fsanitize=thread -g
+FLAG = -Wextra -Wall -Werror #-fsanitize=thread -g
 
 SRC = \
 	ft_atoi.c \
 	ft_current_time.c \
 	ft_start_simulation.c \
+	ft_philo_routine.c \
 	ft_clean.c
 
 OBJ = $(SRC:.c=.o)
