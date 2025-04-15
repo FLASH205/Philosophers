@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:41:55 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/04/08 09:41:40 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/04/14 18:07:30 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	ft_initial_philos(t_data *data)
 	{
 		pthread_mutex_init(&data->forks[i], NULL);
 		data->philos[i].n = i + 1;
-		data->philos[i].last_meal_time = data->start_time;
+		data->philos[i].last_meal_time = ft_current_time();
 		data->philos[i].meals_eaten = 0;
 		data->philos[i].data = data;
 		data->philos[i].l_fork = &data->forks[i];

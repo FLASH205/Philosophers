@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 13:03:00 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/04/11 11:24:37 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/04/12 16:30:26 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	*ft_monitore(void *arg)
 				return (pthread_mutex_unlock(&data->meals_mutex), NULL);
 			l_meal_time = data->philos[i].last_meal_time;
 			pthread_mutex_unlock(&data->meals_mutex);
-			if (ft_current_time() - l_meal_time > (size_t)data->time_die)
+			if ((ft_current_time() - l_meal_time > (size_t)data->time_die))
 			{		
 				ft_print_status(&data->philos[i], "died");
 				pthread_mutex_lock(&data->stop_mutex);
