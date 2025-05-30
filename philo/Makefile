@@ -1,6 +1,6 @@
 NAME = philo
 
-FLAG = -Wextra -Wall -Werror
+FLAG = -Wextra -Wall -Werror# -fsanitize=thread -g
 
 SRC = \
 	ft_utils.c \

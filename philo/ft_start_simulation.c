@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 13:03:00 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/04/12 16:30:26 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/05/29 15:36:55 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,20 +31,29 @@ void	*ft_monitore(void *arg)
 	t_data	*data;
 	size_t	l_meal_time;
 	int		i;
+	int		num;
 
 	data = (t_data *)arg;
+	num = 0;
 	while (1)
 	{
 		i = -1;
 		while (++i < data->n_philo)
 		{
 			pthread_mutex_lock(&data->meals_mutex);
-			if (data->stop || data->philos[i].meals_eaten == data->n_meals)
+			if (!data->philos[i].limit && data->n_meals == data->philos[i].meals_eaten)
+			{
+				data->philos[i].limit = 1;
+				num++;
+			}
+			if (num == data->n_philo)
+				return (pthread_mutex_unlock(&data->meals_mutex), NULL);
+			if (data->stop)
 				return (pthread_mutex_unlock(&data->meals_mutex), NULL);
 			l_meal_time = data->philos[i].last_meal_time;
 			pthread_mutex_unlock(&data->meals_mutex);
-			if ((ft_current_time() - l_meal_time > (size_t)data->time_die))
-			{		
+			if (!data->philos[i].limit && (ft_current_time() - l_meal_time >= (size_t)data->time_die))
+			{
 				ft_print_status(&data->philos[i], "died");
 				pthread_mutex_lock(&data->stop_mutex);
 				data->stop = 1;

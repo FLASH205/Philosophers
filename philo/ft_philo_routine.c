@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 15:39:49 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/04/15 16:55:16 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/05/29 14:16:02 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,14 @@
 
 int	ft_take_fork(t_philos *philos)
 {
-	pthread_mutex_t	*first_fork;
-	pthread_mutex_t	*second_fork;
-
-	if (philos->l_fork < philos->r_fork)
-	{
-		first_fork = philos->l_fork;
-		second_fork = philos->r_fork;
-	}
-	else
-	{
-		first_fork = philos->r_fork;
-		second_fork = philos->l_fork;
-	}
-	pthread_mutex_lock(first_fork);
+	pthread_mutex_lock(philos->l_fork);
 	ft_print_status(philos, "has taken a fork");
 	pthread_mutex_lock(&philos->data->stop_mutex);
 	if (philos->data->stop)
-		return (pthread_mutex_unlock(first_fork),
+		return (pthread_mutex_unlock(philos->l_fork),
 			pthread_mutex_unlock(&philos->data->stop_mutex), 0);
 	pthread_mutex_unlock(&philos->data->stop_mutex);
-	pthread_mutex_lock(second_fork);
+	pthread_mutex_lock(philos->r_fork);
 	ft_print_status(philos, "has taken a fork");
 	return (1);
 }

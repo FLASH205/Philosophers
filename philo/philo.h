@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 12:42:08 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/04/15 16:34:43 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/05/29 15:30:47 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 
 typedef struct s_philos
 {
+	int				limit;
 	int				n;
 	size_t			last_meal_time;
 	int				meals_eaten;
