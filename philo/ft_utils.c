@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 14:29:54 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/05/29 14:02:11 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/05/30 15:35:33 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ size_t	ft_current_time(void)
 {
 	struct timeval	tv;
 
+	tv.tv_sec = 0;
+	tv.tv_usec = 0;
 	gettimeofday(&tv, NULL);
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
@@ -45,14 +47,6 @@ void	ft_print_status(t_philos *philos, char *str)
 
 	start_time = philos->data->start_time;
 	pthread_mutex_lock(&philos->data->print_lock);
-	pthread_mutex_lock(&philos->data->stop_mutex);
-	if (philos->data->stop)
-	{
-		pthread_mutex_unlock(&philos->data->print_lock);
-		pthread_mutex_unlock(&philos->data->stop_mutex);
-		return ;
-	}
-	pthread_mutex_unlock(&philos->data->stop_mutex);
 	printf("%ld %d %s\n", ft_current_time() - start_time, philos->n, str);
 	pthread_mutex_unlock(&philos->data->print_lock);
 }

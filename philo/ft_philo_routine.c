@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 15:39:49 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/05/29 14:16:02 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/05/30 15:56:05 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,26 @@
 int	ft_take_fork(t_philos *philos)
 {
 	pthread_mutex_lock(philos->l_fork);
-	ft_print_status(philos, "has taken a fork");
 	pthread_mutex_lock(&philos->data->stop_mutex);
 	if (philos->data->stop)
-		return (pthread_mutex_unlock(philos->l_fork),
-			pthread_mutex_unlock(&philos->data->stop_mutex), 0);
+	{
+		pthread_mutex_unlock(&philos->data->stop_mutex);
+		pthread_mutex_unlock(philos->l_fork);
+		return (0);
+	}
+	ft_print_status(philos, "has taken a fork");
 	pthread_mutex_unlock(&philos->data->stop_mutex);
 	pthread_mutex_lock(philos->r_fork);
+	pthread_mutex_lock(&philos->data->stop_mutex);
+	if (philos->data->stop)
+	{
+		pthread_mutex_unlock(&philos->data->stop_mutex);
+		pthread_mutex_unlock(philos->r_fork);
+		pthread_mutex_unlock(philos->l_fork);
+		return (0);
+	}
 	ft_print_status(philos, "has taken a fork");
+	pthread_mutex_unlock(&philos->data->stop_mutex);
 	return (1);
 }
 
@@ -32,11 +44,14 @@ int	ft_eating(t_philos *philos)
 		return (0);
 	pthread_mutex_lock(&philos->data->stop_mutex);
 	if (philos->data->stop)
-		return (pthread_mutex_unlock(philos->l_fork),
-			pthread_mutex_unlock(philos->r_fork),
-			pthread_mutex_unlock(&philos->data->stop_mutex), 0);
-	pthread_mutex_unlock(&philos->data->stop_mutex);
+	{
+		pthread_mutex_unlock(&philos->data->stop_mutex);
+		pthread_mutex_unlock(philos->r_fork);
+		pthread_mutex_unlock(philos->l_fork);
+		return (0);
+	}
 	ft_print_status(philos, "is eating");
+	pthread_mutex_unlock(&philos->data->stop_mutex);
 	pthread_mutex_lock(&philos->data->meals_mutex);
 	philos->last_meal_time = ft_current_time();
 	pthread_mutex_unlock(&philos->data->meals_mutex);
@@ -46,9 +61,12 @@ int	ft_eating(t_philos *philos)
 	pthread_mutex_unlock(&philos->data->meals_mutex);
 	pthread_mutex_lock(&philos->data->stop_mutex);
 	if (philos->meals_eaten == philos->data->n_meals || philos->data->stop == 1)
-		return (pthread_mutex_unlock(philos->r_fork),
-			pthread_mutex_unlock(philos->l_fork),
-			pthread_mutex_unlock(&philos->data->stop_mutex), 0);
+	{
+		pthread_mutex_unlock(&philos->data->stop_mutex);
+		pthread_mutex_unlock(philos->r_fork);
+		pthread_mutex_unlock(philos->l_fork);
+		return (0);
+	}
 	pthread_mutex_unlock(&philos->data->stop_mutex);
 	pthread_mutex_unlock(philos->r_fork);
 	pthread_mutex_unlock(philos->l_fork);
@@ -70,8 +88,16 @@ void	*ft_philo_routine(void *arg)
 		pthread_mutex_unlock(&philos->data->stop_mutex);
 		if (!ft_eating(philos))
 			return (NULL);
+		pthread_mutex_lock(&philos->data->stop_mutex);
+		if (philos->data->stop)
+			return (pthread_mutex_unlock(&philos->data->stop_mutex), NULL);
 		ft_print_status(philos, "is sleeping");
+		pthread_mutex_unlock(&philos->data->stop_mutex);
 		ft_usleep((size_t)philos->data->time_sleep, philos);
+		pthread_mutex_lock(&philos->data->stop_mutex);
+		if (philos->data->stop)
+			return (pthread_mutex_unlock(&philos->data->stop_mutex), NULL);
 		ft_print_status(philos, "is thinking");
+		pthread_mutex_unlock(&philos->data->stop_mutex);
 	}
 }
