@@ -3,14 +3,13 @@ NAME = philo_bonus
 FLAG = -Wextra -Wall -Werror #-fsanitize=thread -g
 
 BSRC = \
-	ft_atoi_bonus.c \
-	ft_current_time_bonus.c \
 	ft_start_simulation_bonus.c \
+	ft_utils_bonus.c \
 	ft_clean_bonus.c
 
 BOBJ = $(BSRC:.c=.o)
 
-bonus: $(NAME)
+all: $(NAME)
 
 $(NAME): philo_bonus.c $(BOBJ)
 	cc $(FLAG) $^ -o $@
@@ -24,4 +23,4 @@ clean:
 fclean : clean
 	rm -f $(NAME)
 
-re: fclean bonus
+re: fclean all

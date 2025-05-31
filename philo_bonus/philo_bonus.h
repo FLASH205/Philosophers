@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 09:09:29 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/04/05 14:00:03 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/05/31 18:04:53 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,16 @@
 # include <semaphore.h>
 # include <sys/wait.h>
 # include <sys/time.h>
+# include <fcntl.h>
 # include <signal.h>
 
 typedef struct s_philos
 {
 	int				n;
+	int				limit;
 	size_t			last_meal_time;
 	int				meals_eaten;
 	int				pid;
-	sem_t			*l_fork;
-	sem_t			*r_fork;
 	struct s_data	*data;
 }	t_philos;
 
@@ -43,15 +43,17 @@ typedef struct s_data
 	int				stop;
 	t_philos		*philos;
 	sem_t			*forks;
-	sem_t	print_lock;
-	sem_t	meals_mutex;
-	sem_t	stop_mutex;
+	sem_t	*print_sem;
+	sem_t	*meals_sem;
+	sem_t	*stop_sem;
 }	t_data;
 
 int		ft_atoi(char *str);
 size_t	ft_current_time(void);
 void	ft_print_status(t_philos *philos, char *str);
+void	ft_usleep(size_t time, t_philos *philos);
 int		ft_start_simulation(t_data *data);
 void	ft_clean(t_data *data);
+void	kill_processes(t_data *data);
 
 #endif
