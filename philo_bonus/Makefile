@@ -1,6 +1,6 @@
 NAME = philo_bonus
 
-FLAG = -Wextra -Wall -Werror #-fsanitize=thread -g
+FLAG = -Wextra -Wall -Werror
 
 BSRC = \
 	ft_start_simulation_bonus.c \

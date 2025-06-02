@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 09:09:29 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/05/31 18:04:53 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/06/02 14:25:36 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <semaphore.h>
+# include <pthread.h>
 # include <sys/wait.h>
 # include <sys/time.h>
 # include <fcntl.h>
@@ -50,7 +51,7 @@ typedef struct s_data
 
 int		ft_atoi(char *str);
 size_t	ft_current_time(void);
-void	ft_print_status(t_philos *philos, char *str);
+void	ft_print_status(t_philos *philos, char *str, int oky);
 void	ft_usleep(size_t time, t_philos *philos);
 int		ft_start_simulation(t_data *data);
 void	ft_clean(t_data *data);

@@ -6,24 +6,104 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 13:03:00 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/05/31 18:13:00 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/06/02 14:50:25 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-void	philos_routine(t_data *data, t_philos *philo)
+void	*monitoring_philos(void *arg)
 {
+	t_philos	*philo;
+	int			num;
+	size_t		l_meal_time;
+
+	philo = (t_philos *)arg;
+	num = 0;
 	while (1)
 	{
+		sem_wait(philo->data->meals_sem);
+		if (!philo->limit && philo->meals_eaten == philo->data->n_meals)
+		{
+			philo->limit = 1;
+			num++;
+		}
+		if (num == philo->data->n_philo || philo->data->stop)
+			return (sem_post(philo->data->meals_sem), NULL);
+		l_meal_time = philo->last_meal_time;
+		// printf("->>>>>>>>>>>>> %lu\n", ft_current_time() - l_meal_time);
+		sem_post(philo->data->meals_sem);
+		if (!philo->limit && (ft_current_time() - l_meal_time >= (size_t)philo->data->time_die))
+		{
+			ft_print_status(philo, "died", 1);
+			sem_wait(philo->data->stop_sem);
+			if (!philo->data->stop)
+			{
+				philo->data->stop = 1;
+				sem_post(philo->data->stop_sem);
+				exit (0);
+			}
+			sem_post(philo->data->stop_sem);
+			exit (0);
+		}
+		// printf("a\n");
+	}
+	return (NULL);
+}
+
+int	philos_routine(t_data *data, t_philos *philo)
+{
+	pthread_t	death;
+
+	if (pthread_create(&death, NULL, monitoring_philos, philo))
+		return (write(2, "Failed pthread_create\n", 22), 0);
+	if (pthread_detach(death))
+		return (write(2, "Failed pthread_detach\n", 22), 0);
+	while (1)
+	{
+		sem_wait(data->stop_sem);
+		if (data->stop)
+		{
+			sem_post(data->stop_sem);
+			return (1);
+		}
+		sem_post(data->stop_sem);
 		//*	Taken a fork_________________________
 		sem_wait(data->forks);
-		ft_print_status(philo, "has taken a fork");
+		sem_wait(data->stop_sem);
+		if (data->stop)
+		{
+			sem_post(data->stop_sem);
+			sem_post(data->forks);
+			return (1);
+		}
+		ft_print_status(philo, "has taken a fork", 0);
+		sem_post(data->stop_sem);
+
 		sem_wait(data->forks);
-		ft_print_status(philo, "has taken a fork");
+		
+		sem_wait(data->stop_sem);
+		if (data->stop)
+		{
+			sem_post(data->stop_sem);
+			sem_post(data->forks);
+			sem_post(data->forks);
+			return (1);
+		}
+		ft_print_status(philo, "has taken a fork", 0);
+		sem_post(data->stop_sem);
 		
 		//*	Eating_______________________________
-		ft_print_status(philo, "is eating");
+		sem_wait(data->stop_sem);//?______________________________
+		if (data->stop)
+		{
+			sem_post(data->stop_sem);
+			sem_post(data->forks);
+			sem_post(data->forks);
+			return (1);
+		}
+		ft_print_status(philo, "is eating", 0);
+		sem_post(data->stop_sem);//?______________________________
 		sem_wait(data->meals_sem);
 		philo->last_meal_time = ft_current_time();
 		philo->meals_eaten++;
@@ -34,14 +114,34 @@ void	philos_routine(t_data *data, t_philos *philo)
 		sem_post(data->forks);
 		sem_post(data->forks);
 		
+		sem_wait(data->meals_sem);
+		if (philo->meals_eaten == data->n_meals || data->stop)
+			return (sem_post(data->meals_sem), 1);
+		sem_post(data->meals_sem);
+
 		//*	Sleeping_____________________________
-		ft_print_status(philo, "is sleeping");
+		sem_wait(data->stop_sem);//?______________________________
+		if (data->stop)
+		{
+			sem_post(data->stop_sem);
+			return (1);
+		}
+		ft_print_status(philo, "is sleeping", 0);
+		sem_post(data->stop_sem);//?______________________________
 		ft_usleep((size_t)data->time_sleep, philo);
 		
 		//*	Thinking_____________________________
-		ft_print_status(philo, "is thinking");
-		usleep(200);
+		sem_wait(data->stop_sem);//?______________________________
+		if (data->stop)
+		{
+			sem_post(data->stop_sem);
+			return (1);
+		}
+		ft_print_status(philo, "is thinking", 0);
+		sem_post(data->stop_sem);//?______________________________
+		// usleep(200);
 	}
+	return (1);
 }
 
 void	kill_processes(t_data *data)
@@ -68,7 +168,11 @@ int	ft_start_simulation(t_data *data)
 		if (pid < 0)
 			kill_processes(data);
 		else if (pid == 0)
-			philos_routine(data, &data->philos[i]);
+		{
+			if (!philos_routine(data, &data->philos[i]))
+				return (0);
+			exit(0);
+		}
 		data->philos[i].pid = pid;
 		i++;
 	}

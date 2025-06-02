@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 09:08:56 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/05/31 18:04:21 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/06/02 14:56:33 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int	main(int ac, char *av[])
 		pid = waitpid(-1, &status, 0);
 		if (pid == -1)
 			break;
-		if (WIFEXITED(status) && WEXITSTATUS(status))
+		if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
 		{
 			kill_processes(&data);
 			break;
