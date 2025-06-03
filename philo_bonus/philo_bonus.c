@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 09:08:56 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/06/02 14:56:33 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/06/03 12:43:22 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ int	ft_initial_data(t_data *data, char **av)
 		|| !data->time_sleep || !data->n_meals)
 		return (write(2, "Invalid arguments\n", 18), 0);
 	data->stop = 0;
+	data->num = 0;
 	data->start_time = ft_current_time();
 	sem_unlink("/forks");
 	sem_unlink("/print");

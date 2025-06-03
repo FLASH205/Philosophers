@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 13:03:00 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/06/02 14:50:25 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/06/03 13:24:27 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,38 +15,32 @@
 void	*monitoring_philos(void *arg)
 {
 	t_philos	*philo;
-	int			num;
 	size_t		l_meal_time;
 
 	philo = (t_philos *)arg;
-	num = 0;
 	while (1)
 	{
 		sem_wait(philo->data->meals_sem);
-		if (!philo->limit && philo->meals_eaten == philo->data->n_meals)
+		if (philo->meals_eaten == philo->data->n_meals)
 		{
+			philo->data->num++;	
 			philo->limit = 1;
-			num++;
 		}
-		if (num == philo->data->n_philo || philo->data->stop)
-			return (sem_post(philo->data->meals_sem), NULL);
+		if (philo->data->num == philo->data->n_philo || philo->data->stop)
+		{
+			sem_post(philo->data->meals_sem);
+			exit(0);
+		}
 		l_meal_time = philo->last_meal_time;
-		// printf("->>>>>>>>>>>>> %lu\n", ft_current_time() - l_meal_time);
 		sem_post(philo->data->meals_sem);
 		if (!philo->limit && (ft_current_time() - l_meal_time >= (size_t)philo->data->time_die))
 		{
 			ft_print_status(philo, "died", 1);
 			sem_wait(philo->data->stop_sem);
-			if (!philo->data->stop)
-			{
-				philo->data->stop = 1;
-				sem_post(philo->data->stop_sem);
-				exit (0);
-			}
+			philo->data->stop = 1;
 			sem_post(philo->data->stop_sem);
 			exit (0);
 		}
-		// printf("a\n");
 	}
 	return (NULL);
 }
@@ -114,9 +108,12 @@ int	philos_routine(t_data *data, t_philos *philo)
 		sem_post(data->forks);
 		sem_post(data->forks);
 		
-		sem_wait(data->meals_sem);
+		sem_wait(data->meals_sem);	//~	Compare number of meals____________________
 		if (philo->meals_eaten == data->n_meals || data->stop)
-			return (sem_post(data->meals_sem), 1);
+		{
+			sem_post(data->meals_sem);
+			return (1);
+		}
 		sem_post(data->meals_sem);
 
 		//*	Sleeping_____________________________
