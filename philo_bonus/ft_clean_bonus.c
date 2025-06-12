@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:42:20 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/05/31 18:04:10 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/06/12 13:09:06 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,5 +22,6 @@ void	ft_clean(t_data *data)
 	sem_close(data->forks);
 	sem_close(data->print_sem);
 	sem_close(data->meals_sem);
+	sem_close(data->done_meals);
 	sem_close(data->stop_sem);
 }

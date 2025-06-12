@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 14:29:54 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/05/30 15:35:33 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/06/12 09:12:45 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	ft_usleep(size_t time, t_philos *philos)
 	{
 		pthread_mutex_lock(&philos->data->stop_mutex);
 		if (philos->data->stop)
-		{	
+		{
 			pthread_mutex_unlock(&philos->data->stop_mutex);
 			return ;
 		}

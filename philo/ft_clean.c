@@ -6,20 +6,20 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 14:42:20 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/04/15 14:40:31 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/06/12 09:21:12 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	ft_clean(t_data *data)
+void	ft_clean(t_data *data, int n, int index)
 {
 	int	i;
 
 	i = -1;
 	if (data->forks)
 	{
-		while (++i < data->n_philo)
+		while (++i < index)
 			pthread_mutex_destroy(&data->forks[i]);
 		free(data->forks);
 		data->forks = NULL;
@@ -29,7 +29,10 @@ void	ft_clean(t_data *data)
 		free(data->philos);
 		data->philos = NULL;
 	}
-	pthread_mutex_destroy(&data->print_lock);
-	pthread_mutex_destroy(&data->meals_mutex);
-	pthread_mutex_destroy(&data->stop_mutex);
+	if (n != 0 || n == 6)
+		pthread_mutex_destroy(&data->print_lock);
+	if ((n != 0 && n != 1) || n == 6)
+		pthread_mutex_destroy(&data->meals_mutex);
+	if ((n != 0 && n != 1 && n != 2) || n == 6)
+		pthread_mutex_destroy(&data->stop_mutex);
 }

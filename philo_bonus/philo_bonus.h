@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 09:09:29 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/06/03 11:50:59 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/06/12 13:06:41 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,11 @@ typedef struct s_data
 	int				n_meals;
 	size_t			start_time;
 	int				stop;
-	int				num;
 	t_philos		*philos;
 	sem_t			*forks;
 	sem_t	*print_sem;
 	sem_t	*meals_sem;
+	sem_t	*done_meals;
 	sem_t	*stop_sem;
 }	t_data;
 
