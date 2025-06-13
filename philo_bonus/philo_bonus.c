@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 09:08:56 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/06/12 13:30:46 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/06/13 11:40:27 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ int	main(int ac, char *av[])
 	t_data	data;
 	int		status;
 	int		pid;
+	int		pid_meals;
 	int		i;
 
 	if (ac < 5 || ac > 6)
@@ -78,40 +79,25 @@ int	main(int ac, char *av[])
 	
 	if (data.n_meals > 0)
 	{
-		
-		i = 0;
-		while (i < data.n_philo)
+		pid_meals = fork();
+		if (pid_meals == -1)
+			return (ft_clean(&data), 1);
+		if (pid_meals == 0)
 		{
-			sem_wait(data.done_meals);
-			i++;
+			i = 0;
+			
+			while (i < data.n_philo)
+			{
+				sem_wait(data.done_meals);
+				i++;
+			}
+			exit(2);
 		}
-		kill_processes(&data);
-		// i = 0;
-		// while (i < data.n_philo)
-		// {
-		// 	pid = waitpid(-1, &status, 0);
-		// 	if (pid == -1)
-		// 		break ;
-		// 	if (WEXITSTATUS(status) || WEXITSTATUS(status) == 0)	//@	if dead he exited by 0
-		// 		kill_processes(&data);
-		// 	if (WEXITSTATUS(status) || WEXITSTATUS(status) == 1)	//@	if finish meals he exited by 1
-		// 	{
-		// 		kill_processes(&data);
-		// 		break ;
-		// 	}
-		// 	i++;
-		// }
-		
 	}
-	else
-	{
-		pid = waitpid(-1, &status, 0);
-		if (pid == -1)
-			return (1);
-		if (WEXITSTATUS(status) || WEXITSTATUS(status) == 1)	//@	if finish meals he exited by 1
-			kill_processes(&data);
-		else if (WEXITSTATUS(status) || WEXITSTATUS(status) == 0)	//@	if dead he exited by 0
-			kill_processes(&data);
-	}
+	pid = waitpid(-1, &status, 0);
+	if (pid == -1)
+		return (1);
+	if (WEXITSTATUS(status) == 5 || WEXITSTATUS(status) == 0 || WEXITSTATUS(status) == 2)
+		kill_processes(&data, data.n_philo, pid_meals);
 	return (ft_clean(&data), 0);
 }

@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 09:09:29 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/06/12 13:06:41 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/06/13 11:02:13 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,6 @@ void	ft_print_status(t_philos *philos, char *str, int oky);
 void	ft_usleep(size_t time, t_philos *philos);
 int		ft_start_simulation(t_data *data);
 void	ft_clean(t_data *data);
-void	kill_processes(t_data *data);
+void	kill_processes(t_data *data, int index, int pid);
 
 #endif
