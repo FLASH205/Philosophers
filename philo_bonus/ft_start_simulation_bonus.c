@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 13:03:00 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/06/13 11:22:28 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/06/14 09:30:03 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,10 @@ void	*monitoring_death_philos(void *arg)
 		if (ft_current_time() - l_meal_time >= (size_t)philo->data->time_die)
 		{
 			ft_print_status(philo, "died", 1);
-			sem_wait(philo->data->stop_sem);
-			philo->data->stop = 1;
-			sem_post(philo->data->stop_sem);
+			sem_post(philo->data->kill_sem);	//^________________________
+			// sem_wait(philo->data->stop_sem);
+			// philo->data->stop = 1;
+			// sem_post(philo->data->stop_sem);
 			exit (0);
 		}
 	}
@@ -106,6 +107,7 @@ int	philos_routine(t_data *data, t_philos *philo)
 			// printf("[%zu] Philosopher %d has completed all meals.\n", ft_current_time(), philo->n);
 			sem_post(data->meals_sem);
 			sem_post(data->done_meals);
+			sem_post(data->kill_sem);
 			return (1);
 			//exit(1);
 		}
@@ -169,10 +171,7 @@ int	ft_start_simulation(t_data *data)
 			n = philos_routine(data, &data->philos[i]);
 			if (!n)
 				return (0);
-			exit(5);
-			//else if (n == 1)
-			//	exit(1);
-			// exit(0);
+			exit(0);
 		}
 		data->philos[i].pid = pid;
 		i++;

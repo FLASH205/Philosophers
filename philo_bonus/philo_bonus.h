@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 09:09:29 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/06/13 11:02:13 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/06/14 08:18:14 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,19 +35,20 @@ typedef struct s_philos
 
 typedef struct s_data
 {
-	int				n_philo;
-	int				time_die;
-	int				time_eat;
-	int				time_sleep;
-	int				n_meals;
-	size_t			start_time;
-	int				stop;
-	t_philos		*philos;
-	sem_t			*forks;
-	sem_t	*print_sem;
-	sem_t	*meals_sem;
-	sem_t	*done_meals;
-	sem_t	*stop_sem;
+	int			n_philo;
+	int			time_die;
+	int			time_eat;
+	int			time_sleep;
+	int			n_meals;
+	size_t		start_time;
+	int			stop;
+	t_philos	*philos;
+	sem_t		*forks;
+	sem_t		*print_sem;
+	sem_t		*meals_sem;
+	sem_t		*done_meals;
+	sem_t		*stop_sem;
+	sem_t		*kill_sem;
 }	t_data;
 
 int		ft_atoi(char *str);

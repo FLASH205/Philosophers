@@ -6,7 +6,7 @@
 /*   By: ybahmaz <ybahmaz@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 09:08:56 by ybahmaz           #+#    #+#             */
-/*   Updated: 2025/06/13 11:40:27 by ybahmaz          ###   ########.fr       */
+/*   Updated: 2025/06/14 09:34:22 by ybahmaz          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,16 @@ int	ft_initial_data(t_data *data, char **av)
 	sem_unlink("/meals");
 	sem_unlink("/stop");
 	sem_unlink("/done_meals");
+	sem_unlink("/kill_sem");
 	data->forks = sem_open("/forks", O_CREAT, 0644, data->n_philo);
 	data->print_sem = sem_open("/print", O_CREAT, 0644, 1);
 	data->meals_sem = sem_open("/meals", O_CREAT, 0644, 1);
 	data->stop_sem = sem_open("/stop", O_CREAT, 0644, 1);
 	data->done_meals = sem_open("/done_meals", O_CREAT, 0644, 0);
+	data->kill_sem = sem_open("/kill_sem", O_CREAT, 0644, 0);
 	if (data->forks == SEM_FAILED || data->print_sem == SEM_FAILED
-		|| data->meals_sem == SEM_FAILED || data->stop_sem == SEM_FAILED || data->done_meals == SEM_FAILED)
+		|| data->meals_sem == SEM_FAILED || data->stop_sem == SEM_FAILED
+		|| data->done_meals == SEM_FAILED || data->kill_sem == SEM_FAILED)
 		return (write(2, "Failed sem_open\n", 16), 0);
 	data->philos = malloc(sizeof(t_philos) * data->n_philo);
 	if (!data->philos)
@@ -69,6 +72,7 @@ int	main(int ac, char *av[])
 	int		pid_meals;
 	int		i;
 
+	pid_meals = -1;
 	if (ac < 5 || ac > 6)
 		return (write(2, "Should be 5 or 6 arguments\n", 27), 1);
 	if (!ft_initial_data(&data, av))
@@ -76,12 +80,13 @@ int	main(int ac, char *av[])
 	ft_initial_philos(&data);
 	if (!ft_start_simulation(&data))
 		return (ft_clean(&data), 1);
-	
+	sem_wait(data.kill_sem);	//^___________________________
 	if (data.n_meals > 0)
 	{
 		pid_meals = fork();
 		if (pid_meals == -1)
 			return (ft_clean(&data), 1);
+		sem_wait(data.kill_sem);
 		if (pid_meals == 0)
 		{
 			i = 0;
@@ -91,13 +96,24 @@ int	main(int ac, char *av[])
 				sem_wait(data.done_meals);
 				i++;
 			}
-			exit(2);
+			exit(0);
 		}
 	}
-	pid = waitpid(-1, &status, 0);
-	if (pid == -1)
-		return (1);
-	if (WEXITSTATUS(status) == 5 || WEXITSTATUS(status) == 0 || WEXITSTATUS(status) == 2)
-		kill_processes(&data, data.n_philo, pid_meals);
+	kill_processes(&data, data.n_philo, pid_meals);
+	if (pid_meals != -1)
+	{
+		pid = waitpid(pid_meals, &status, 0);
+		if (pid == -1)
+			return (ft_clean(&data), 1);
+	}
+	i = 0;
+	while (i < data.n_philo)
+	{
+		pid = waitpid(data.philos[i].pid, &status, 0);
+		if (pid == -1)
+			return (ft_clean(&data), 1);
+	}
+	// if (WEXITSTATUS(status) == 5 || WEXITSTATUS(status) == 0 || WEXITSTATUS(status) == 2)
+	// 	kill_processes(&data, data.n_philo, pid_meals);
 	return (ft_clean(&data), 0);
 }
